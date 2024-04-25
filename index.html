@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Galerie dynamique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 20px;
+        }
+        .square {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .square:hover {
+            transform: scale(1.2);
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .popup {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            height: 80%;
+            display: flex;
+            flex-direction: row;
+            position: relative;
+        }
+        .popup .videos {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .popup .videos iframe {
+            width: 100%;
+            height: 40%;
+        }
+        .popup .text {
+            width: 50%;
+            padding-left: 20px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="gallery">
+    <!-- Utilisation de data-popup-id pour identifier quelle pop-up ouvrir -->
+    <div class="square" style="background-image: url('https://i.postimg.cc/52Kb2rvw/LANGRES-Jeanne-d-Arc.jpg');" data-popup-id="popup1" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/3wWrjh7S/SEMOUTIERS-chapelle.jpg');" data-popup-id="popup2" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/tJpL5dWq/CHAUMONT-fontaine.jpg');" data-popup-id="popup3" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/0jkBmk1r/DONREMY-Jeanne-et-ses-voix.jpg');" data-popup-id="popup4" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/V6XLxTxC/RACINES-eglise.jpg');" data-popup-id="popup5" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/dV3DS54q/BAR-SUR-SEINE-chapelle.jpg');" data-popup-id="popup6" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/BQzFrGXP/REYNEL-porte.jpg');" data-popup-id="popup7" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/HnxHmRVV/MORIMOND-souche.jpg');" data-popup-id="popup8" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/Ss7PJX5w/BOLOGNE-chapelle.jpg');" data-popup-id="popup9" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/HnzFPJ9Q/CHAUMONT-ange.jpg');" data-popup-id="popup10" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/zXDsHjqp/CHAUMONT-basilique-tombe.jpg');" data-popup-id="popup11" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/zGvY6kM3/CHAUMONT-lebon.jpg');" data-popup-id="popup12" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/jjJ0dSRb/CHAUMONT-memorial1870.jpg');" data-popup-id="popup13" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/P57njwsy/CHAUMONT-statue-amitie.jpg');" data-popup-id="popup14" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/wxkKBPY7/CHAUMONT-vase.jpg');" data-popup-id="popup15" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/02tLYwQv/CONDES-batiments-pont.jpg');" data-popup-id="popup16" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/fTBh8P86/CONDES-jeanne-d-arc.jpg');" data-popup-id="popup17" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/XJSMZ6vy/CONDES-pot-de-fleur.jpg');" data-popup-id="popup18" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/mkm6yvTj/DONREMY-basilique.jpg');" data-popup-id="popup19" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/jdj1SShF/DONREMY-Jacques-d-arc.jpg');" data-popup-id="popup20" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/v8hjyV5n/DONREMY-Saint-Georges.jpg');" data-popup-id="popup21" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/j5r9x68H/DONREMY-Saint-Martin.jpg');" data-popup-id="popup22" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/90Bj5gCw/LANGRES-cathedrale-1.jpg');" data-popup-id="popup23" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/gjpP7bFP/LANGRES-cathedrale-2.jpg');" data-popup-id="popup24" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/Twg6QYs9/LANGRES-cathedrale-3.jpg');" data-popup-id="popup25" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://cdn-01.media-brady.com/store/sifr/media/catalog/product/s/i/sifr_mgr50cou_1_std.lang.all.jpg');" data-popup-id="popup26" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/Sxxmq4XS/LANGRES-cathedrale-5.jpg');" data-popup-id="popup27" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/yNwKFSLx/LANGRES-cathedrale-6.jpg');" data-popup-id="popup28" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/wTH6fLgs/LANGRES-cathedrale-7.jpg');" data-popup-id="popup29" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/MKDzhHp3/LANGRES-Diderot.jpg');" data-popup-id="popup30" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/W15bJzRq/LANGRES-Petite-Jeanne.jpg');" data-popup-id="popup31" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/Hs4Ld3B2/LANGRES-Reste-chapelle.jpg');" data-popup-id="popup32" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/qvSSYHyZ/NEUFCHATEAU-Jeanne-et-la-couronne.jpg');" data-popup-id="popup33" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/13m3t6dZ/PONT-A-MOUSSON-guerriere.jpg');" data-popup-id="popup34" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/Bb5JZQc6/PONT-A-MOUSSON-interieur-eglise.jpg');" data-popup-id="popup35" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/sxCVRZWq/PONT-A-MOUSSON-vase.jpg');" data-popup-id="popup36" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/nzDH51Xq/VIGNORY-chapelle.jpg');" data-popup-id="popup37" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/SNpKBH7R/VILLIERS-SUR-SUIZE-chapelle.jpg');" data-popup-id="popup38" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/hGF4BSjQ/CHAUMONT-basilique-banc.jpg');" data-popup-id="popup39" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/QtQ7cjg0/A-SUPPRIMER-croissy-eglise.png');" data-popup-id="popup40" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/KvZssBCs/REYNEL-eglise.jpg');" data-popup-id="popup41" onclick="openPopup(this)"></div>
+    <div class="square" style="background-image: url('https://i.postimg.cc/6q5VTdLY/VILLENEUVE-AU-CHEMIN-chapelle.jpg');" data-popup-id="popup42" onclick="openPopup(this)"></div>
+</div>
+
+    
+<!-- Chaque pop-up a un ID unique correspondant à chaque carré -->
+<div class="popup-overlay" id="popup-overlay-popup1" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/watch?v=XmSuVUA8pJo" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://youtu.be/Y2598wFpYCk" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Jeanne d'Arc - Langres</h2>
+            <h3>LOCALISATION</h3>
+            <p>Cette statue se trouve dans le croisillon gauche du transept de la cathédrale Saint-Mammès.</p>
+            <h3>PRISE DE PHOTOS (76 photos)</h3>
+            <p>J'ai pris peu de photos pour un sujet qui m'intéressait beaucoup car les bruits de l'appareil photo dans la cathédrale résonnaient, que les chaises de prières collées entre-elles me dérangeaient, surtout avec mon trépied car je devais faire des poses de 1 à 2 secondes en fonction du peu d'éclairage (ce qui n'est pas suffisant au vu du résultat assez sombre car la statue est d'un blanc pur normalement).</p>
+            <h3>NUAGE DE POINTS</h3>
+            <p>Pendant le calcul j'ai vu que les points de correspondance entre les images étaient cinq à dix fois plus faible que les autres sujets et j'ai eu peur. Mais le résultat n'est pas si mauvais que cela et Dieu merci !</p>
+            <h3>MODELE 3D</h3>
+            <p>Je suis toujours fasciné par la beauté et la pureté de cette statue. Magnifique !</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup2" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <!--<span class="close" onclick="closePopup(this)">&times;</span>-->
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://youtu.be/sIkSQMyya5s" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://youtu.be/uxjZVJ7wqC4" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+<h2>Chapelle - Semoutiers</h2>
+            <h3>LOCALISATION</h3>
+            <p>Cette chapelle se trouve sur la route au sud de la commune. Elle est visible de la D520 au nord du péage.</p>
+            <h3>PRISE DE PHOTOS (74 photos)</h3>
+            <p>Je mourais de faim donc j'ai fait le minimum de photos.</p>
+            <h3>NUAGE DE POINTS</h3>
+            <p>Malheureusement à cause du minimum de photos, le toit manque pas mal. On y voit même le crottin de cheval sur la façade arrière :) .</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup3" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 3</h2>
+            <p>Texte descriptif pour la troisième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup4" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 4</h2>
+            <p>Texte descriptif pour la quatrième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup5" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 5</h2>
+            <p>Texte descriptif pour la cinquième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup6" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 6</h2>
+            <p>Texte descriptif pour la sixième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup7" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 7</h2>
+            <p>Texte descriptif pour la septième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup8" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 8</h2>
+            <p>Texte descriptif pour la huitième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup9" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 9</h2>
+            <p>Texte descriptif pour la neuvième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup10" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 10</h2>
+            <p>Texte descriptif pour la dixième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup11" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 11</h2>
+            <p>Texte descriptif pour la onzième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup12" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 12</h2>
+            <p>Texte descriptif pour la douzième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup13" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 13</h2>
+            <p>Texte descriptif pour la treizième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup14" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 14</h2>
+            <p>Texte descriptif pour la quatorzième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup15" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 15</h2>
+            <p>Texte descriptif pour la quinzième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup16" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 16</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup17" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 17</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup18" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 18</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="popup-overlay" id="popup-overlay-popup19" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 19</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup20" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 20</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup21" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 21</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup22" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 22</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup23" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 23</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup24" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 24</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup25" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 25</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup26" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 26</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup27" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 27</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup28" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 28</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup29" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 29</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup30" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 30</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup31" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 31</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup32" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 32</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup33" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 33</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup34" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 34</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup35" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 35</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup36" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 36</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup37" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <p><center>Nuage de points</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+            <p><center>Modèle 3D</center></p>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 37</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup38" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <iframe src="https://www.youtube.com/embed/example31" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 38</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup39" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+
+        <div class="videos">
+            <iframe src="https://www.youtube.com/embed/example31" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 39</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup40" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <iframe src="https://www.youtube.com/embed/example31" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 40</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+    
+<div class="popup-overlay" id="popup-overlay-popup41" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <iframe src="https://www.youtube.com/embed/example31" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 41</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay-popup42" onclick="closePopup(this)">
+    <div class="popup" onclick="event.stopPropagation()">
+        <div class="videos">
+            <iframe src="https://www.youtube.com/embed/example31" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/example32" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="text">
+            <h2>Pop-up 42</h2>
+            <p>Texte descriptif pour la seizième pop-up.</p>
+        </div>
+    </div>
+</div>  
+    
+
+    
+<!-- Script pour ajuster la taille des carrés en fonction de l'image -->
+<script>
+    function openPopup(square) {
+        var popupId = square.getAttribute("data-popup-id");
+        document.getElementById("popup-overlay-" + popupId).style.display = 'flex';
+    }
+
+    function closePopup(popup) {
+        popup.style.display = 'none';
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var squares = document.querySelectorAll(".square");
+
+        squares.forEach(function(square) {
+            var bgImageUrl = getComputedStyle(square).backgroundImage;
+            var imgSrc = bgImageUrl.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+
+            var img = new Image();
+            img.src = imgSrc;
+            img.onload = function() {
+                var aspectRatio = img.width / img.height;
+                if (aspectRatio > 1) {
+                    // Image paysage
+                    square.style.width = "400px";
+                    square.style.height = "300px";
+                } else {
+                    // Image portrait
+                    square.style.height = "400px";
+                    square.style.width = "300px";
+                }
+            };
+        });
+    });
+</script>
+
+</body>
+</html>
